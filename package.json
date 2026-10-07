@@ -1,0 +1,54 @@
+{
+  "name": "payments-test-lab",
+  "version": "1.0.0",
+  "description": "A minimal Payments Service wrapped in API, DB, Kafka, contract (Pact) and load (k6) test layers.",
+  "private": true,
+  "main": "dist/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "infra:up": "docker compose up -d --wait postgres kafka && docker compose run --rm kafka-init",
+    "infra:down": "docker compose down -v",
+    "infra:logs": "docker compose logs -f",
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "test:api": "jest tests/api --runInBand",
+    "test:kafka": "jest tests/kafka --runInBand",
+    "test:contract:consumer": "jest tests/contract/consumer --runInBand",
+    "test:contract:provider": "jest tests/contract/provider --runInBand",
+    "test:contract": "npm run test:contract:consumer && npm run test:contract:provider",
+    "test:all": "npm run test:contract && npm run test:api && npm run test:kafka",
+    "test:load": "k6 run load/load-test.js",
+    "test:load:smoke": "k6 run -e PROFILE=smoke load/load-test.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.10.0",
+    "dotenv": "^16.4.5",
+    "express": "^5.1.0",
+    "kafkajs": "^2.2.4",
+    "pino": "^9.5.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@pact-foundation/pact": "^13.2.0",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.10.0",
+    "@types/pg": "^8.11.10",
+    "@types/supertest": "^6.0.2",
+    "jest": "^29.7.0",
+    "pg": "^8.13.1",
+    "prisma": "^6.10.0",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+pacts/
+logs/
+*.log
+.env
+load-summary.json
